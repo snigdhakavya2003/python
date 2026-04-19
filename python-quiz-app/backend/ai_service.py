@@ -1,5 +1,9 @@
-from groq import Groq
 import os
+import json
+from dotenv import load_dotenv
+from groq import Groq
+
+load_dotenv()  # ← must be BEFORE Groq client is created
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
@@ -17,15 +21,13 @@ Return ONLY a JSON object in this exact format (no markdown, no extra text):
 }}"""
 
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
+        model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=500,
         temperature=0.7,
     )
 
-    import json
     raw = response.choices[0].message.content.strip()
-    # strip markdown fences if present
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -60,13 +62,12 @@ Evaluate and return ONLY a JSON object in this exact format (no markdown, no ext
 }}"""
 
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
+        model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=700,
         temperature=0.3,
     )
 
-    import json
     raw = response.choices[0].message.content.strip()
     if raw.startswith("```"):
         raw = raw.split("```")[1]
